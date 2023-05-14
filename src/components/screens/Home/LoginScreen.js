@@ -46,7 +46,7 @@ const Login = ({navigation}) => {
               type: 'error',
               text1: data.error,
               position: 'top',
-              visibilityTime: 3000,
+              visibilityTime: 2000,
               autoHide: true,
             });
           } else {
@@ -55,7 +55,7 @@ const Login = ({navigation}) => {
               type: 'success',
               text1: 'Vous avez été inscrits avec succès',
               position: 'top',
-              visibilityTime: 3000,
+              visibilityTime: 2000,
               autoHide: true,
             });
           }

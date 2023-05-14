@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import image from '../../../../assets/images/background-2.png';
 import styles from '../../../common/formThemescss';
+import Toast from 'react-native-toast-message';
 
 const Themes = () => {
     const themeList = [
@@ -19,6 +20,9 @@ const Themes = () => {
       'Monument',
     ];
     const [themeSelectList, setThemeSelectList] = useState([]);
+    const [userId, setUserId] = useState(null);
+    const [userName, setUserName] = useState(null);
+    const [userEmail, setUserEmail] = useState(null);
   
     const addTheme = theme => {
       if (!isThemesExist(theme)) {
@@ -34,7 +38,31 @@ const Themes = () => {
       return themeSelectList.includes(theme);
     };
   
-    const handleSubmit = () => {};
+    const handleSubmit = () => {
+       // Envoyer les données au serveur
+    fetch('http://192.168.1.86:3000/themes', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: userId,
+        userName: userName,
+        userEmail: userEmail,
+        themes: themeSelectList,
+      }),
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        // Traiter la réponse du serveur
+        console.log(responseJson);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+
+    };
   
     return (
       <View style={styles.root}>

@@ -5,7 +5,6 @@ import {
   ImageBackground,
   TextInput,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import image from '../../../../assets/images/background.png';
 import styles from '../../../common/formRegistercss';
@@ -27,7 +26,7 @@ const Register = ({navigation}) => {
         type: 'error',
         text1: 'Tous les champs sont obligatoires',
         position: 'top',
-        visibilityTime: 3000,
+        visibilityTime: 2000,
         autoHide: true,
       });
       return;
@@ -47,7 +46,7 @@ const Register = ({navigation}) => {
               type: 'error',
               text1: data.error,
               position: 'top',
-              visibilityTime: 3000,
+              visibilityTime: 2000,
               autoHide: true,
             });
           } else {
@@ -56,7 +55,7 @@ const Register = ({navigation}) => {
               type: 'success',
               text1: 'Vous avez été inscrits avec succès',
               position: 'top',
-              visibilityTime: 3000,
+              visibilityTime: 2000,
               autoHide: true,
             });
           }
