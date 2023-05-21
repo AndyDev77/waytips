@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
   homeImg: {
     flex: 1,
     justifyContent: 'center',
+    zIndex: 999
   },
   // buttonContainer: {
   //   flex: 1,
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
   },
   contentContainerText: {
-    flex: 0.5,
+    flex: 0.4,
     alignItems: 'center',
     marginHorizontal: 20
   },
@@ -74,13 +75,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     fontSize: 23,
     fontWeight: '700',
-    lineHeight: 40,
+    lineHeight: 60,
   },
   titleEmail: {
     fontFamily: 'Poppins',
     fontSize: 16,
     fontWeight: '400',
-    lineHeight: 20,
+    lineHeight: 10,
+    color: '#00000099'
   },
   TextBottomSheet: {
     color: '#7D56C2',
@@ -121,6 +123,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // Ajout de cette ligne pour aligner les boutons horizontalement
     justifyContent: 'center',
     flexWrap: 'wrap',
+    marginTop: 20,
   },
   themesBtn: {
     backgroundColor: '#7D56C2',
@@ -146,14 +149,12 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginVertical: -20,
-    // filter: 'grayscale(80%)',
   },
   noProfileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
     marginVertical: -20,
-    filter: 'grayscale(80%)',
   },
   photoLogocss: {
     marginVertical: -50,
