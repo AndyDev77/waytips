@@ -104,8 +104,9 @@ router.post("/user/profile-image", authenticateToken, upload.single("profileImag
     const filePath = req.file.path;
     const fileName = filePath.substring(filePath.lastIndexOf("\\") + 1); // Obtient le nom du fichier à partir du chemin complet
     const relativePath = `uploads/${fileName}`; // Construit le chemin relatif
+    const absolutePath = `http://192.168.1.86:3000/${relativePath}`; // Construit l'URL complète
 
-    user.profileImage = relativePath;
+    user.profileImage = absolutePath;
     await user.save();
 
     res.status(200).json(user);
@@ -114,6 +115,34 @@ router.post("/user/profile-image", authenticateToken, upload.single("profileImag
     res.status(500).json({ error: "Server error" });
   }
 });
+
+// Mettre à jour la photo de profil de l'utilisateur connecté
+router.put("/user/profile-image", authenticateToken, upload.single("profileImage"), async (req, res) => {
+  const userId = req.user._id;
+
+  try {
+    // Rechercher l'utilisateur connecté
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Mettre à jour l'URL de l'image de profil
+    const filePath = req.file.path;
+    const fileName = filePath.substring(filePath.lastIndexOf("\\") + 1); // Obtient le nom du fichier à partir du chemin complet
+    const relativePath = `uploads/${fileName}`; // Construit le chemin relatif
+    const absolutePath = `http://192.168.1.86:3000/${relativePath}`; // Construit l'URL complète
+
+    user.profileImage = absolutePath;
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 // Mettre à jour le champ "name" de l'utilisateur connecté
 router.put("/user/name", authenticateToken, async (req, res) => {

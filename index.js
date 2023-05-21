@@ -20,6 +20,7 @@ const userRoutes = require("./routes/userRoutes");
 app.use(bodyParser.json());
 app.use(authRoutes);
 app.use(userRoutes);
+app.use('/uploads', express.static('uploads'));
 
 
 
