@@ -14,17 +14,25 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-  }
+  },
+  themes: {
+    type: [String],
+    required: true,
+  },
+  profileImage: {
+    type: String, // Assuming you store the image URL as a string
+    default: "" // You can set a default value if needed
+  },
 });
 
 UserSchema.pre("save", async function (next) {
   const user = this;
-  console.log("Just before saving before hashing :", user.password);
+  console.log("Just before saving before hashing:", user.password);
   if (!user.isModified("password")) {
     return next();
   }
   user.password = await bcrypt.hash(user.password, 8);
-  console.log("Just before saving & after hashing :", user.password);
+  console.log("Just before saving & after hashing:", user.password);
   next();
 });
 

@@ -7,18 +7,21 @@ const bodyParser = require("body-parser");
 //
 require("./db");
 require("./models/User");
-require("./models/Themes");
+
 
 
 const authRoutes = require("./routes/authRoutes");
 const requireToken = require("./Middlewares/AuthTokenRequired");
-const themesRoutes = require("./routes/themesRoutes");
+const userRoutes = require("./routes/userRoutes");
+
 
 // 
 
 app.use(bodyParser.json());
 app.use(authRoutes);
-app.use(themesRoutes);
+app.use(userRoutes);
+
+
 
 
 //
