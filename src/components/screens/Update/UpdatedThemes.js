@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   View,
   ImageBackground,
-  Pressable,
   TouchableOpacity,
 } from 'react-native';
 import image from '../../../../assets/images/background-2.png';
@@ -12,39 +11,20 @@ import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const Themes = ({navigation}) => {
+const UpdatedThemes = ({ navigation, route }) => {
   const [userData, setUserData] = useState(null);
+  const [newthemeSelectList, setnewthemeSelectList] = useState([]);
 
   useEffect(() => {
-    // Fetch user data using the token from AsyncStorage
-    AsyncStorage.getItem('token')
-      .then(token => {
-        if (token) {
-          axios
-            .get('http://192.168.1.86:3000/user', {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            })
-            .then(response => {
-              const data = response.data;
-              setUserData(data);
-            })
-            .catch(error => {
-              console.log(error);
-            });
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    // Récupérer les données utilisateur depuis les paramètres de la route
+    const { userData } = route.params;
+    console.log(userData); 
+    setUserData(userData);
   }, []);
 
   useEffect(() => {
     console.log(userData); // Vérifier les données de l'utilisateur dans la console
   }, [userData]);
-
-  // Liste des thèmes
 
   const themeList = [
     'Attraction',
@@ -55,28 +35,24 @@ const Themes = ({navigation}) => {
     'Monument',
   ];
 
-  const [themeSelectList, setThemeSelectList] = useState([]);
-
   const addTheme = theme => {
     if (!isThemesExist(theme)) {
-      setThemeSelectList([...themeSelectList, theme]);
+      setnewthemeSelectList([...newthemeSelectList, theme]);
     } else {
-      setThemeSelectList(themeSelectList.filter(e => e !== theme));
+      setnewthemeSelectList(newthemeSelectList.filter(e => e !== theme));
     }
   };
 
-  console.log(themeSelectList);
-
   const isThemesExist = theme => {
-    return themeSelectList.includes(theme);
+    return newthemeSelectList.includes(theme);
   };
 
-  const handleSubmit = () => {
+  const updateThemes = () => {
     AsyncStorage.getItem('token')
       .then(token => {
         if (token) {
           // Vérifier la longueur des thèmes
-          if (themeSelectList.length > 3) {
+          if (newthemeSelectList.length > 3) {
             Toast.show({
               type: 'error',
               text1: 'Au maximum 3 thèmes',
@@ -86,53 +62,51 @@ const Themes = ({navigation}) => {
             });
             return;
           }
-  
-          if (themeSelectList.length === 0) {
+
+          if (newthemeSelectList.length === 0) {
             Toast.show({
               type: 'error',
-              text1: 'Sélectionnez au moins 1 thèmes',
+              text1: 'Sélectionnez au moins 1 thème',
               position: 'top',
               visibilityTime: 2000,
               autoHide: true,
             });
             return;
           }
-  
+
           axios
-            .post('http://192.168.1.86:3000/user/themes', {
-              themes: themeSelectList,
-            }, {
-              headers: {
-                Authorization: `Bearer ${token}`,
+            .put(
+              'http://192.168.1.86:3000/user/themes',
+              {
+                themes: newthemeSelectList,
               },
-            })
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            )
             .then(response => {
-              // Traitement de la réponse si nécessaire
-              console.log(response.data);
-  
-              // Afficher le toast de succès
+              const updatedUser = response.data;
+              setUserData(updatedUser);
+              navigation.navigate('Profile', { userData: updatedUser });
               Toast.show({
                 type: 'success',
-                text1: 'Super vos thèmes ont étés ajoutés',
-                position: 'top',
+                text1: 'Thèmes mis à jour',
+                text2: 'Les thèmes ont étés mis à jour avec succès',
                 visibilityTime: 2000,
-                autoHide: true,
               });
-  
-              // Naviguer vers la page de profil
-              navigation.navigate('Profile');
+
+              
             })
             .catch(error => {
               // Gestion des erreurs
               console.log(error);
-  
-              // Afficher le toast d'erreur
               Toast.show({
                 type: 'error',
-                text1: error.message,
-                position: 'top',
+                text1: 'Erreur de mise à jour',
+                text2: "Une erreur s'est produite lors de la mise à jour des thèmes",
                 visibilityTime: 2000,
-                autoHide: true,
               });
             });
         }
@@ -149,19 +123,18 @@ const Themes = ({navigation}) => {
         <View style={styles.containerCustom2}>
           <View style={styles.containerTitle}>
             <Text style={styles.title}>
-              Bonjour, {userData ? userData.name : ''}
+              {userData ? userData.name : ''}
             </Text>
           </View>
           <View>
             <Text style={styles.subtitle}>
-              Sélectionnez vos thèmes parmi ces propositions. Vous pourrez les
-              modifier par la suite.
+              Modifier vos thèmes !
             </Text>
           </View>
           <View>
             {themeList.map((item, index) => {
               return (
-                <Pressable
+                <TouchableOpacity
                   key={index}
                   style={[
                     styles.buttonThemes,
@@ -170,26 +143,29 @@ const Themes = ({navigation}) => {
                           backgroundColor: '#7D56C2',
                           borderColor: '#7D56C2',
                         }
-                      : {backgroundColor: 'white'},
+                      : { backgroundColor: 'white' },
                   ]}
-                  onPress={() => addTheme(item)}>
+                  onPress={() => addTheme(item)}
+                >
                   <Text
                     style={[
                       styles.buttonTextThemes,
                       isThemesExist(item)
-                        ? {color: 'white'}
-                        : {color: '#7D56C2'},
-                    ]}>
+                        ? { color: 'white' }
+                        : { color: '#7D56C2' },
+                    ]}
+                  >
                     {item}
                   </Text>
-                </Pressable>
+                </TouchableOpacity>
               );
             })}
           </View>
           <View>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => handleSubmit()}>
+              onPress={updateThemes}
+            >
               <Text style={styles.buttonText}>Suivant</Text>
             </TouchableOpacity>
           </View>
@@ -200,4 +176,4 @@ const Themes = ({navigation}) => {
   );
 };
 
-export default Themes;
+export default UpdatedThemes;

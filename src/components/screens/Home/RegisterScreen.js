@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,9 @@ import {
 import image from '../../../../assets/images/background.png';
 import styles from '../../../common/formRegistercss';
 import Toast from 'react-native-toast-message';
+import axios from 'axios';
 
-const Register = ({navigation}) => {
+const Register = ({ navigation }) => {
   const [fdata, setFdata] = useState({
     name: '',
     email: '',
@@ -20,8 +21,7 @@ const Register = ({navigation}) => {
   const [errormsg, setErrormsg] = useState(null);
 
   const Sendtobackend = () => {
-    // console.log(fdata);
-    if (fdata.name == '' || fdata.email == '' || fdata.password == '') {
+    if (fdata.name === '' || fdata.email === '' || fdata.password === '') {
       Toast.show({
         type: 'error',
         text1: 'Tous les champs sont obligatoires',
@@ -31,16 +31,9 @@ const Register = ({navigation}) => {
       });
       return;
     } else {
-      fetch('http://192.168.1.86:3000/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(fdata),
-      })
-        .then(res => res.json())
-        .then(data => {
-          // console.log(data);
+      axios.post('http://192.168.1.86:3000/signup', fdata)
+        .then(response => {
+          const data = response.data;
           if (data.error) {
             Toast.show({
               type: 'error',
@@ -59,9 +52,13 @@ const Register = ({navigation}) => {
               autoHide: true,
             });
           }
+        })
+        .catch(error => {
+          console.log(error);
         });
     }
   };
+  
   return (
     <View style={styles.root}>
       <ImageBackground source={image} resizeMode="cover" style={styles.homeImg}>

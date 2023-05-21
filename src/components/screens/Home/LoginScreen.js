@@ -1,17 +1,18 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   ImageBackground,
   TextInput,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import image from '../../../../assets/images/background.png';
 import styles from '../../../common/formLogincss';
 import Toast from 'react-native-toast-message';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   const [fdata, setFdata] = useState({
     email: '',
     password: '',
@@ -20,27 +21,13 @@ const Login = ({navigation}) => {
   const [errormsg, setErrormsg] = useState(null);
 
   const Sendtobackend = () => {
-    //console.log(fdata);
-    if (fdata.email == '' || fdata.password == '') {
-      Toast.show({
-        type: 'error',
-        text1: 'Tous les champs sont obligatoires',
-        position: 'top',
-        visibilityTime: 3000,
-        autoHide: true,
-      });
-      return;
+    if (fdata.email === '' || fdata.password === '') {
+      // ...
     } else {
-      fetch('http://192.168.1.86:3000/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(fdata),
-      })
-        .then(res => res.json())
-        .then(data => {
-          // console.log(data);
+      axios.post('http://192.168.1.86:3000/signin', fdata)
+        .then(response => {
+          const data = response.data;
+          console.log('Server Response:', data); 
           if (data.error) {
             Toast.show({
               type: 'error',
@@ -50,18 +37,35 @@ const Login = ({navigation}) => {
               autoHide: true,
             });
           } else {
-            navigation.navigate('Themes');
-            Toast.show({
-              type: 'success',
-              text1: 'Vous avez été inscrits avec succès',
-              position: 'top',
-              visibilityTime: 2000,
-              autoHide: true,
-            });
+            // Store the token in AsyncStorage
+            AsyncStorage.setItem('token', data.token)
+              .then(() => {
+                if (data.user && Array.isArray(data.user.themes) && data.user.themes.length === 0) {
+                  console.log('Redirecting to Themes');
+                  navigation.navigate('Themes');
+                } else {
+                  console.log('Redirecting to Profile');
+                  navigation.navigate('Profile');
+                }
+                Toast.show({
+                  type: 'success',
+                  text1: 'Vous êtes conncté avec succès',
+                  position: 'top',
+                  visibilityTime: 2000,
+                  autoHide: true,
+                });
+              })
+              .catch(error => {
+                console.log(error);
+              });
           }
+        })
+        .catch(error => {
+          console.log(error);
         });
     }
   };
+
   return (
     <View style={styles.root}>
       <ImageBackground source={image} resizeMode="cover" style={styles.homeImg}>

@@ -82,6 +82,10 @@ project.ext.react = [
     enableHermes: true,  // clean and rebuild if changing
 ]
 
+dependencies {
+    implementation project(':react-native-image-picker')
+}
+
 apply from: "../../node_modules/react-native/react.gradle"
 
 /**

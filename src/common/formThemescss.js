@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     color: 'rgba(0, 0, 0, 0.5)',
-    fontSize: 16,
+    fontSize: 15,
     textAlign: 'center',
     lineHeight: 20,
     margin: 10,
